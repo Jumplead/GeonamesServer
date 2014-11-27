@@ -34,6 +34,12 @@ RUN \
     yum install -y geoip && \
     yum clean all
 
+# Install Supervisord
+RUN yum install -y python-pip && \
+    yum -y clean all && \
+    pip install "pip>=1.4,<1.5" --upgrade && \
+    pip install supervisor
+
 # Copy in the Files
 COPY . /root/GeonamesServer
 WORKDIR /root/GeonamesServer
@@ -42,7 +48,8 @@ WORKDIR /root/GeonamesServer
 RUN \
     mv config/elasticsearch.cfg.sample config/elasticsearch.cfg && \
     mv config/mongo.cfg.sample config/mongo.cfg && \
-    mv config/server.json.sample config/server.json
+    mv config/server.json.sample config/server.json && \
+    mv supervisord.conf /etc/supervisord.conf
 
 # Start MongoDB and Elastic search in daemon mode only for data import
 RUN \
@@ -53,5 +60,9 @@ RUN \
 
     make install && \
 
-    rm -rf ./resources/data && \
-    rm -rf ./resources/sources
+    rm -fr resources/data/*.txt && \
+    rm -fr resources/data/*.zip && \
+    rm -fr resources/sources/*.txt && \
+    rm -fr resources/sources/*.zip
+
+CMD ["supervisord -n -c /etc/supervisord.conf"]
