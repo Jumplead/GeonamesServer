@@ -3,8 +3,8 @@ FROM centos:centos7
 # Install MongoDB, Node, NPM, GeoIP and PHP
 COPY mongodb.repo /etc/yum.repos.d/mongodb.repo
 RUN \
-    yum install -y wget make mongodb-org epel-release php-pecl-mongo php-curl java geoip unzip && \
-    yum install -y nodejs npm && \
+    yum install -y epel-release && \
+    yum install -y nodejs npm python-pip wget make mongodb-org epel-release php-pecl-mongo php-curl java geoip unzip && \
     mkdir -p /data/db && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
     yum clean all
@@ -18,9 +18,7 @@ RUN \
     yum clean all
 
 # Install Supervisord
-RUN yum install -y python-pip && \
-    yum -y clean all && \
-    pip install "pip>=1.4,<1.5" --upgrade && \
+RUN pip install "pip>=1.4,<1.5" --upgrade && \
     pip install supervisor
 
 # Copy in the Files
@@ -47,4 +45,4 @@ RUN \
     rm -fr resources/sources/*.zip && \
     rm -fr resources/sources/*.gz
 
-CMD ["supervisord", "-n", "-c /etc/supervisord.conf"]
+CMD ["supervisord", "-n"]
