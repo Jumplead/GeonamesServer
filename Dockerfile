@@ -4,7 +4,7 @@ FROM centos:centos7
 COPY mongodb.repo /etc/yum.repos.d/mongodb.repo
 RUN \
     yum install -y epel-release && \
-    yum install -y nodejs npm python-pip wget make mongodb-org epel-release php-pecl-mongo php-curl java geoip unzip && \
+    yum install -y nodejs npm python-pip wget make mongodb-org epel-release php-pecl-mongo php-curl java geoip unzip git && \
     mkdir -p /data/db && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
     yum clean all
@@ -20,6 +20,9 @@ RUN \
 # Install Supervisord
 RUN pip install "pip>=1.4,<1.5" --upgrade && \
     pip install supervisor
+
+# Set PHP Default timezone
+RUN sed -i -e "s/;date.timezone\s*=/date.timezone = UTC/g" /etc/php.ini
 
 # Copy in the Files
 COPY . /root/GeonamesServer
