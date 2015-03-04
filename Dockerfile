@@ -45,4 +45,6 @@ RUN \
     rm -fr resources/sources/*.zip && \
     rm -fr resources/sources/*.gz
 
+EXPOSE 3000
+
 CMD ["supervisord", "-n"]
