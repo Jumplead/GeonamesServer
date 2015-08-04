@@ -4,6 +4,7 @@ var confParser = require('./lib/configParser');
 var middlewares = require('./lib/middleware');
 var common = require('./lib/common');
 var mongojs = require('mongojs');
+var methodOverride = require('method-override');
 
 var app = module.exports = express();
 
@@ -71,8 +72,11 @@ app.use(middlewares.enableCORS(app));
 // Set X-Geoname-* Response headers
 app.use(middlewares.setGeonamesResponseHeaders(app));
 
-app.use(express.bodyParser());
-app.use(express.methodOverride());
+app.use(express.urlencoded());
+app.use(express.json());
+app.use(methodOverride('X-HTTP-Method'));          // Microsoft
+app.use(methodOverride('X-HTTP-Method-Override')); // Google/GData, default option
+app.use(methodOverride('X-Method-Override'));      // IBM
 app.use(app.router);
 
 // Set root controller, template are in views directory

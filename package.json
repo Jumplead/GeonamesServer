@@ -6,7 +6,8 @@
         "start": "node app"
     },
     "dependencies": {
-        "express": "3.0.0rc5",
+        "express": "3.21.2",
+        "method-override": "2.3.5",
         "request": "2.11.4",
         "geoip": "*",
         "mocha": "1.6.0",
