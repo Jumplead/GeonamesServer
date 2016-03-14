@@ -4,7 +4,7 @@ FROM centos:centos7
 COPY mongodb.repo /etc/yum.repos.d/mongodb.repo
 RUN \
     yum install -y epel-release && \
-    yum install -y nodejs npm python-pip wget make mongodb-org epel-release php-pecl-mongo php-curl java geoip unzip git && \
+    yum install -y nodejs npm python-pip wget make mongodb-org epel-release php-pecl-mongo php-curl java geoip unzip git which && \
     mkdir -p /data/db && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
     yum clean all
