@@ -37,7 +37,7 @@ RUN \
 
 # Start MongoDB and Elastic search in daemon mode only for data import
 RUN \
-    /usr/bin/mongod --fork --logpath /var/log/mongodb/mongod.log --smallfiles && \
+    /usr/bin/mongod --fork --logpath /var/log/mongodb/mongod.log --smallfiles --nojournal && \
     /usr/share/elasticsearch/bin/elasticsearch && \
 
     make install && \
