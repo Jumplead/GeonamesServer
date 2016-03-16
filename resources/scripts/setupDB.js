@@ -64,6 +64,9 @@
     db.cities.ensureIndex({
         countryCode : 1
     });
+    db.cities.ensureIndex({
+        geonameid : 1
+    });
 
     print(j + " entries processed");
 })();
