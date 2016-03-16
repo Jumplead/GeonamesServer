@@ -37,7 +37,7 @@ RUN \
 
 # Start MongoDB and Elastic search in daemon mode only for data import
 RUN \
-    /usr/bin/mongod --fork --logpath /var/log/mongodb/mongod.log --smallfiles --nojournal && \
+    /usr/bin/mongod --fork --logpath /var/log/mongodb/mongod.log --smallfiles && \
     /usr/share/elasticsearch/bin/elasticsearch && \
 
     make install && \
@@ -46,7 +46,11 @@ RUN \
     rm -fr resources/data/*.zip && \
     rm -fr resources/sources/*.txt && \
     rm -fr resources/sources/*.zip && \
-    rm -fr resources/sources/*.gz
+    rm -fr resources/sources/*.gz && \
+    
+    /usr/bin/mongod --shutdown && \
+    pkill java && \
+    rm -fr /data/db/journal
 
 EXPOSE 3000
 
