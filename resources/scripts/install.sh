@@ -166,7 +166,7 @@ if [ ! -f "$SOURCE_DIR/admin2Codes.txt" ];then
     wget http://download.geonames.org/export/dump/admin2Codes.txt
 fi
 
-if [ ! -f "$DATA_DIR/admincodes.txt" ];then
+if [ ! -f "$DATA_DIR/admincodes2.txt" ];then
     cat "$SOURCE_DIR/admin2Codes.txt" | cut -f1,2 > "$DATA_DIR/admincodes2.txt"
 fi
 
