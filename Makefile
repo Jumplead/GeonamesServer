@@ -16,5 +16,7 @@ clean:
 	rm -rf ./resources/sources
 	rm -rf ./node_modules
 
-.PHONY: test
+docker:
+	docker build -t jumplead/geonames-server .
 
+.PHONY: test

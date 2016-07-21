@@ -160,6 +160,16 @@ if [ ! -f "$DATA_DIR/countrynames.txt" ];then
     cat "$SOURCE_DIR/countryInfo.txt" | grep -v '^#' | cut -f1,5 > "$DATA_DIR/countrynames.txt"
 fi
 
+if [ ! -f "$SOURCE_DIR/admin2Codes.txt" ];then
+    cd $SOURCE_DIR
+    echo "Downloading admin2Codes.txt"
+    wget http://download.geonames.org/export/dump/admin2Codes.txt
+fi
+
+if [ ! -f "$DATA_DIR/admincodes.txt" ];then
+    cat "$SOURCE_DIR/admin2Codes.txt" | cut -f1,2 > "$DATA_DIR/admincodes2.txt"
+fi
+
 # Droping mongo database
 echo "Droping '$mongo_database' database ..."
 mongo $cmd_mongo_host $cmd_mongo_port  $cmd_mongo_user $cmd_mongo_pass $mongo_database --eval "db.dropDatabase()" > /dev/null
@@ -190,6 +200,10 @@ mongo $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass $mongo_dat
 echo "Start importing 'admincodes.txt' in admincodes collection ..."
 mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c admincodes \
     --type tsv --fields code,name --stopOnError "$DATA_DIR/admincodes.txt"
+
+echo "Start importing 'admincodes2.txt' in admin2codes collection ..."
+mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c admin2codes \
+    --type tsv --fields code,name --stopOnError "$DATA_DIR/admincodes2.txt"
 
 echo "Start importing 'countrynames.txt' in countrynames collection"
 mongoimport $cmd_mongo_host $cmd_mongo_port $cmd_mongo_user $cmd_mongo_pass -d $mongo_database -c countrynames \

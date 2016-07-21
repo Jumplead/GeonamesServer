@@ -68,5 +68,12 @@
         geonameid : 1
     });
 
+    db.admincodes.ensureIndex({
+        code : 1
+    });
+    db.admin2codes.ensureIndex({
+        code : 1
+    });
+
     print(j + " entries processed");
 })();

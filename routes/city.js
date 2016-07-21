@@ -1,6 +1,7 @@
 var S = require('string');
 var _ = require('underscore');
 var request = require('request');
+var Promise = require('bluebird');
 
 var geoloc = require('./../lib/geoloc');
 var common = require('./../lib/common');
@@ -92,9 +93,28 @@ module.exports = function(app) {
 
                     var datas = controller.sortDatasFromCountries(datas, countries);
 
-                    app.get('mongodb').collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
+                    var promises = [];
+                    promises.push(new Promise(function(resolve, reject) {
+                        app.get('mongodb').collection('admincodes').find({code: {$in: adminCodes}}, function(err, result) {
+                            resolve(result);
+                        });
+                    }));
+
+                    //Find the admin 2 code of each result
+                    _.each(datas, function(o) {
+                        promises.push(new Promise(function(resolve, reject) {
+                            var admin2code = o.countryCode + '.' + o.admin1Code + '.' + o.admin2Code;
+
+                            app.get('mongodb').collection('admin2codes').findOne({code: admin2code}, function(err, result) {
+                                resolve(result);
+                            });
+                        }));
+                    });
+
+                    Promise.all(promises).then(function(results) {
                         res.header('X-Geonames-Total', datas.length.toString());
-                        res.jsonp(controller.jsonFromQueryLookup(adminCodes, datas));
+
+                        res.jsonp(controller.jsonFromQueryLookup(results, datas));
                     });
                 } else {
                     console.log('elastic search error, got error ', error, ' status code ', res.statusCode, ' and response ', response);
@@ -126,12 +146,27 @@ module.exports = function(app) {
                         return;
                     }
 
-                    var datas = controller.sortDatasFromCountries(datas, countries);
+                    datas = controller.sortDatasFromCountries(datas, countries);
                     datas = datas.pop();
 
-                    app.get('mongodb').collection('admincodes').find({code: {$in: adminCodes}}, function(err, result) {
-                        res.jsonp(controller.jsonFromGeonameLookup(result, datas));
+                    var admin1codeData = new Promise(function(resolve, reject) {
+                        app.get('mongodb').collection('admincodes').find({code: {$in: adminCodes}}, function(err, result) {
+                            resolve(result);
+                        });
                     });
+
+                    var admin2codeData = new Promise(function(resolve, reject) {
+                        var admin2code = datas.countryCode + '.' + datas.admin1Code + '.' + datas.admin2Code;
+
+                        app.get('mongodb').collection('admin2codes').findOne({code: admin2code}, function(err, result) {
+                            resolve(result);
+                        });
+                    });
+
+                    Promise.all([admin1codeData, admin2codeData]).then(function(result) {
+                        res.jsonp(controller.jsonFromGeonameLookup(result[0], result[1], datas));
+                    });
+
                 } else {
                     return common.sendErrorResponse(res);
                 }
@@ -179,8 +214,22 @@ module.exports = function(app) {
                     var datas = controller.sortDatasFromCountries(datas, countries);
                     datas = datas.pop();
 
-                    app.get('mongodb').collection('admincodes').find({code: {$in: adminCodes}}, function(err, adminCodes) {
-                        res.jsonp(controller.jsonFromIpLookup(adminCodes, datas, ip));
+                    var admin1codeData = new Promise(function(resolve, reject) {
+                        app.get('mongodb').collection('admincodes').find({code: {$in: adminCodes}}, function(err, result) {
+                            resolve(result);
+                        });
+                    });
+
+                    var admin2codeData = new Promise(function(resolve, reject) {
+                        var admin2code = datas.countryCode + '.' + datas.admin1Code + '.' + datas.admin2Code;
+
+                        app.get('mongodb').collection('admin2codes').findOne({code: admin2code}, function(err, result) {
+                            resolve(result);
+                        });
+                    });
+
+                    Promise.all([admin1codeData, admin2codeData]).then(function(result) {
+                        res.jsonp(controller.jsonFromIpLookup(result[0], result[1], datas, ip));
                     });
                 } else {
                     console.log('elastic search error, got error ', error, ' status code ', res.statusCode, ' and response ', response);
@@ -190,4 +239,3 @@ module.exports = function(app) {
         });
     });
 };
-

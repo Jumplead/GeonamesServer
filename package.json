@@ -16,6 +16,7 @@
         "ejs": "*",
         "stylus": "*",
         "string": "*",
-        "underscore": "*"
+        "underscore": "*",
+        "bluebird": "~3.4.1"
     }
 }
