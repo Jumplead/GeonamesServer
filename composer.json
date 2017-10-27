@@ -5,5 +5,9 @@
         "guzzle/guzzle": "~3.5",
         "symfony/process": "~2.1",
         "symfony/console": "~2.1"
-    }
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "prefer-stable": true
 }

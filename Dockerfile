@@ -1,10 +1,11 @@
 FROM centos:centos7
 
-# Install MongoDB, Node, NPM, GeoIP and PHP
+# Install MongoDB, Node, yarn, GeoIP and PHP
 COPY mongodb.repo /etc/yum.repos.d/mongodb.repo
 RUN \
-    yum install -y epel-release && \
-    yum install -y nodejs npm python-pip wget make mongodb-org epel-release php-pecl-mongo php-curl java geoip unzip git which && \
+    yum install -y epel-release wget && \
+    wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo && \
+    yum install -y nodejs yarn python-pip wget make mongodb-org epel-release php-pecl-mongo php-curl java geoip unzip git which && \
     mkdir -p /data/db && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer && \
     yum clean all
@@ -47,7 +48,7 @@ RUN \
     rm -fr resources/sources/*.txt && \
     rm -fr resources/sources/*.zip && \
     rm -fr resources/sources/*.gz && \
-    
+
     /usr/bin/mongod --shutdown && \
     pkill java && \
     rm -fr /data/db/journal

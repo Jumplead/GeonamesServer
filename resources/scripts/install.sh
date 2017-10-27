@@ -97,9 +97,13 @@ if [ $? -eq 1 ]; then
     exit 1;
 fi
 
-# Installing npm modules
-echo "Installing npm modules ..."
-/usr/bin/env npm install
+# Installing yarn modules
+echo "Installing yarn modules ..."
+yarn
+
+# Update Maxmind databases
+echo "Updating maxmind databases ..."
+node ./node_modules/geoip-lite/scripts/updatedb.js
 
 # Create directories
 if [ ! -d $DATA_DIR ];then
@@ -112,17 +116,6 @@ fi
 
 # Get geonames resources
 echo "Start fetching Geonames ressources ..."
-
-if [ ! -f "$SOURCE_DIR/GeoLiteCity.dat.gz" ];then
-    cd $SOURCE_DIR
-    echo "Downloading GeoliteCity.dat.gz"
-    wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
-fi
-
-if [ ! -f "$DATA_DIR/GeoLiteCity.dat" ];then
-    echo "Extracting GeoliteCity.dat.gz"
-    gunzip -c "$SOURCE_DIR/GeoLiteCity.dat.gz" > "$DATA_DIR/GeoLiteCity.dat"
-fi
 
 if [ ! -f "$SOURCE_DIR/allCountries.zip" ];then
     cd $SOURCE_DIR

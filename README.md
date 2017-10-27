@@ -109,9 +109,6 @@ mongo_database_test="tests"
         "port": 3000,
         "allowed_domains": ["*"],
         "max_result_per_page" : 30
-    },
-    "geo": {
-        "geolitepath": "./resources/data/GeoLiteCity.dat"
     }
 }
 ```
@@ -543,5 +540,3 @@ make test
 ## License
 
 This project is licensed under the [MIT license](http://opensource.org/licenses/MIT).
-
-

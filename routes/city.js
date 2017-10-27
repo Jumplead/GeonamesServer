@@ -52,7 +52,7 @@ module.exports = function(app) {
                 // if ip or city could not be found fallback to sort by population
                 if (ip) {
                     try {
-                        var point = geoloc.getPointfromIp(ip, app.get('app.config').geo.geolitepath);
+                        var point = geoloc.getPointfromIp(ip);
 
                         if (null === point) {
                             app.set('req.sort', 'population');
@@ -181,7 +181,7 @@ module.exports = function(app) {
             return common.sendBadRequestResponse(res, "Could not determine your remote IP or the provided one is not valid");
         }
 
-        var city = geoloc.getCityFromIp(ip, app.get('app.config').geo.geolitepath);
+        var city = geoloc.getCityFromIp(ip);
 
         if (!city || !city.city) {
             return common.sendNotFoundResponse(res);
@@ -191,8 +191,8 @@ module.exports = function(app) {
         countryNamesCollection.find({}, function(err, countries) {
             var requestBody = controller.esQuery.findCitiesByName(
                 city.city,
-                [city.country_code.toLowerCase()],
-                {longitude:city.longitude,latitude:city.latitude},
+                [city.country.toLowerCase()],
+                {longitude:city.ll[1],latitude:city.ll[0]},
                 'closeness',
                 1
             );
