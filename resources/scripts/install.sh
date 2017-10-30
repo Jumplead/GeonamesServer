@@ -38,7 +38,7 @@ if [ -z `which composer` ]; then
     exit 1
 fi
 
-composer install --prefer-source
+composer install
 
 if [ $? -eq 1 ]; then
     echo "Failed to install composer dependencies"

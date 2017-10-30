@@ -48,6 +48,7 @@ RUN \
     rm -fr resources/sources/*.txt && \
     rm -fr resources/sources/*.zip && \
     rm -fr resources/sources/*.gz && \
+    rm -fr /var/log/mongodb/mongod.log && \
 
     /usr/bin/mongod --shutdown && \
     pkill java && \

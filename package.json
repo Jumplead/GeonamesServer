@@ -17,6 +17,7 @@
         "string": "*",
         "stylus": "*",
         "supertest": "0.4.0",
-        "underscore": "*"
+        "underscore": "*",
+        "wait-on": "^2.0.2"
     }
 }
